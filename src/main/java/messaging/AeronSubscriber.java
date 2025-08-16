@@ -21,7 +21,7 @@ public class AeronSubscriber {
                     String received = buffer.getStringWithoutLengthAscii(offset, length);
                     System.out.println("Received: " + received);
                 };
-
+        System.out.println("AeronSubscriber.poll ready to poll...");
         subscription.poll(handler, 10);
     }
 }
