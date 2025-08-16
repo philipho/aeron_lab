@@ -1,0 +1,88 @@
+plugins {
+    id 'java'
+    id 'com.google.protobuf' version '0.9.4'
+    id 'application'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+// Guice works upto Java version 21 not 23.
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+application {
+    mainClass = 'org.example.Main'
+}
+
+repositories {
+    mavenCentral()
+}
+
+protobuf {
+    protoc {
+        // The version of protoc to use
+        artifact = "com.google.protobuf:protoc:4.31.1"
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                // Your plugin configuration goes here
+            }
+        }
+//        all()*.plugins {
+//            // Optional: for gRPC code generation
+//            // grpc {
+//            //     artifact = "io.grpc:protoc-gen-grpc-java:1.63.0"
+//            // }
+//        }
+    }
+}
+
+dependencies {
+    // Guice
+    implementation 'com.google.inject:guice:7.0.0'
+
+    // JSR-300
+    implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
+
+    // Chronicle Queue
+    implementation 'net.openhft:chronicle-queue:5.27ea8'
+
+    // Protobuf
+    implementation 'com.google.protobuf:protobuf-java:4.31.1'
+
+    // Protobuf for gRPC
+//    implementation 'io.grpc:grpc-protobuf:1.63.0'
+//    implementation 'io.grpc:grpc-stub:1.63.0'
+
+    // Aeron
+    implementation 'io.aeron:aeron-all:1.48.5'
+    implementation 'io.aeron:aeron-driver:1.48.5'
+    implementation 'io.aeron:aeron-client:1.48.5'
+    implementation 'org.agrona:agrona:2.2.4'
+
+    // Disruptor
+    implementation 'com.lmax:disruptor:4.0.0'
+
+    // Others...
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.27.2'
+    testImplementation("org.mockito:mockito-core:5.10.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.10.0")
+    implementation 'org.awaitility:awaitility:4.3.0'
+    implementation 'org.slf4j:slf4j-api:2.0.7'
+    implementation 'ch.qos.logback:logback-classic:1.4.12'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+}
+
+test {
+    useJUnitPlatform()
+}
