@@ -1,4 +1,4 @@
-package driver;
+package org.mec.aeronlab.driver;
 
 import io.aeron.driver.MediaDriver;
 import io.aeron.driver.ThreadingMode;

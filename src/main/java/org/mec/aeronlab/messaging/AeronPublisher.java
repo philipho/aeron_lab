@@ -1,6 +1,6 @@
-package messaging;
+package org.mec.aeronlab.messaging;
 
-import driver.EmbeddedMediaDriverProvider;
+import org.mec.aeronlab.driver.EmbeddedMediaDriverProvider;
 import io.aeron.Aeron;
 import io.aeron.Publication;
 import jakarta.inject.Inject;

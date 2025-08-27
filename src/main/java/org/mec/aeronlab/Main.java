@@ -1,7 +1,9 @@
+package org.mec.aeronlab;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import config.AeronModule;
-import messaging.MessageLoop;
+import org.mec.aeronlab.config.AeronModule;
+import org.mec.aeronlab.messaging.MessageLoop;
 
 /*
 Tinker with:

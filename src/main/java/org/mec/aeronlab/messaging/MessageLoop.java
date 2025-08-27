@@ -1,4 +1,4 @@
-package messaging;
+package org.mec.aeronlab.messaging;
 
 import jakarta.inject.Inject;
 
