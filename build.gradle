@@ -14,13 +14,15 @@ java {
 }
 
 application {
-    mainClass = 'org.example.Main'
+    mainClass = 'org.mec.Main'
+    applicationDefaultJvmArgs = ['--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED']
 }
 
 repositories {
     mavenCentral()
 }
 
+// Configure the Protobuf Plugin
 protobuf {
     protoc {
         // The version of protoc to use

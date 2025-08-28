@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package fix;
+
+option java_package = "org.mec.aeronlab";
+option java_outer_classname = "MassQuoteProto";
+
+message QuoteEntry {
+  string symbol = 1;
+  double bid_price = 2;
+  double ask_price = 3;
+  double bid_size = 4;
+  double ask_size = 5;
+  string quote_condition = 6;
+}
+
+message MassQuote {
+  string quote_id = 1;
+  string quote_req_id = 2;
+  string quote_type = 3;
+  string quote_status = 4;
+  repeated QuoteEntry entries = 5;
+}
