@@ -3,6 +3,7 @@ package org.mec.aeronlab;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.mec.aeronlab.config.AeronModule;
+import org.mec.aeronlab.messaging.AeronSubscriber;
 import org.mec.aeronlab.messaging.MessageLoop;
 
 /*

@@ -15,6 +15,7 @@ java {
 
 application {
     mainClass = 'org.mec.Main'
+    applicationDefaultJvmArgs = ['--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED']
 }
 
 repositories {

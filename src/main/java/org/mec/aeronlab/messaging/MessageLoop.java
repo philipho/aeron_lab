@@ -1,6 +1,7 @@
 package org.mec.aeronlab.messaging;
 
 import jakarta.inject.Inject;
+import org.mec.aeronlab.MassQuoteProcessor;
 
 public class MessageLoop implements Runnable {
     private final AeronPublisher publisher;
@@ -8,6 +9,7 @@ public class MessageLoop implements Runnable {
 
     @Inject
     public MessageLoop(AeronPublisher publisher, AeronSubscriber subscriber) {
+        System.out.println("MessageLoop.ctor called...");
         this.publisher = publisher;
         this.subscriber = subscriber;
     }
@@ -15,9 +17,10 @@ public class MessageLoop implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < 10; i++) {
-            String msg = "Hello Aeron #" + i;
+            System.out.println("Message Loop " + i);
+            byte[] msg = MassQuoteProcessor.encodeMassQuote();
             publisher.send(msg);
-            subscriber.poll();
+            subscriber.pollMassQuote();
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
