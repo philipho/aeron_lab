@@ -1,5 +1,20 @@
+# Gradle files
+.gradle/
 /build/
-/generated/
-**/*.class
-.gradle
-.idea
+
+# IDE files
+.idea/
+*.iml
+*.iws
+.vscode/
+
+# Compiled class files
+*.class
+
+#Logs and temporary files
+*.log
+#!gradle-wrapper.log
+
+# Other files
+.DS_Store
+
