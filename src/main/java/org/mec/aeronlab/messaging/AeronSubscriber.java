@@ -1,6 +1,7 @@
 package org.mec.aeronlab.messaging;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import io.aeron.FragmentAssembler;
 import org.mec.aeronlab.MassQuoteProcessor;
 import org.mec.aeronlab.MassQuoteProto;
 import org.mec.aeronlab.driver.EmbeddedMediaDriverProvider;
@@ -30,20 +31,30 @@ public class AeronSubscriber {
         subscription.poll(handler, 10);
     }
 
-    public void pollMassQuote() {
-        FragmentHandler handler = (buffer, offset, length, header) -> {
+    public void pollMassQuote()
+    {
+        FragmentHandler handler = (buffer, offset, length, header) ->
+        {
             byte[] data = new byte[length];
             buffer.getBytes(offset, data);
 
-            try {
+            try
+            {
                 MassQuoteProcessor.decodeMassQuote(data);
-            } catch (InvalidProtocolBufferException e) {
+            }
+            catch (InvalidProtocolBufferException e)
+            {
                 throw new RuntimeException(e);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         };
 
-        subscription.poll(handler, 10);
+        FragmentHandler assembler = new FragmentAssembler(handler);
+
+        subscription.poll(assembler, 10);
     }
 }
