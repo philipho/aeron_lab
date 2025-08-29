@@ -4,7 +4,7 @@ import java.util.List;
 
 public class MassQuoteProcessor {
 
-    public static byte[] encodeMassQuote() {
+    public static byte[] encodeMassQuote(int i) {
         var quote1 = MassQuoteProto.QuoteEntry.newBuilder()
                 .setSymbol("APPL")
                 .setBidPrice(189.50)
@@ -24,7 +24,7 @@ public class MassQuoteProcessor {
                 .build();
 
         var massQuote = MassQuoteProto.MassQuote.newBuilder()
-                .setQuoteId("Q12345")
+                .setQuoteId(String.valueOf(i))
                 .setQuoteReqId("REQ67898")
                 .setQuoteType("Tradable")
                 .setQuoteStatus("AcceptedW")
@@ -34,7 +34,7 @@ public class MassQuoteProcessor {
         return massQuote.toByteArray();
     }
 
-    public static void decodeMassQuote(byte[] data) throws Exception {
+    public static MassQuoteProto.MassQuote decodeMassQuote(byte[] data) throws Exception {
         var decoded = MassQuoteProto.MassQuote.parseFrom(data);
 
         System.out.println("Quote ID: " + decoded.getQuoteId());
@@ -51,11 +51,13 @@ public class MassQuoteProcessor {
                     entry.getAskPrice(), entry.getAskSize(),
                     entry.getQuoteCondition()));
         }
+
+        return decoded;
     }
 
     //----- test
     public static void main(String[] args) {
-        var encoded = encodeMassQuote();
+        var encoded = encodeMassQuote(123);
         try {
             decodeMassQuote(encoded);
         } catch (Exception e) {

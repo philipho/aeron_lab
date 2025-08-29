@@ -10,18 +10,25 @@ import io.aeron.Subscription;
 import io.aeron.logbuffer.FragmentHandler;
 import jakarta.inject.Inject;
 
-public class AeronSubscriber {
+public class AeronSubscriber
+{
     private final Subscription subscription;
 
+    // tracker is injected
+    private final SequencePositionTracker tracker;
+
     @Inject
-    public AeronSubscriber(EmbeddedMediaDriverProvider driverProvider) {
+    public AeronSubscriber(EmbeddedMediaDriverProvider driverProvider, SequencePositionTracker tracker)
+    {
         System.out.println("AeronSubscriber.ctor called...");
         Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(driverProvider.aeronDirectory()));
 //        subscription = aeron.addSubscription("aeron:ipc", 10);
         subscription = aeron.addSubscription("aeron:udp?endpoint=224.0.1.1:40123|interface=192.168.1.107", 10);
+        this.tracker = tracker;
     }
 
-    public void poll() {
+    public void poll()
+    {
         FragmentHandler handler =
                 (buffer, offset, length, header) -> {
                     String received = buffer.getStringWithoutLengthAscii(offset, length);
@@ -40,7 +47,12 @@ public class AeronSubscriber {
 
             try
             {
-                MassQuoteProcessor.decodeMassQuote(data);
+                MassQuoteProto.MassQuote mq = MassQuoteProcessor.decodeMassQuote(data);
+                long quoteId = Long.parseLong(mq.getQuoteId());
+                long pos = header.position();
+                System.out.println("AeronSubscriber.pollMassQuote: quoteId=" + quoteId + ", pos=" + pos);
+
+                tracker.record(quoteId, pos);
             }
             catch (InvalidProtocolBufferException e)
             {
