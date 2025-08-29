@@ -58,9 +58,12 @@ public class MassQuoteProcessor {
     //----- test
     public static void main(String[] args) {
         var encoded = encodeMassQuote(123);
-        try {
-            decodeMassQuote(encoded);
-        } catch (Exception e) {
+        try
+        {
+            MassQuoteProto.MassQuote mq = decodeMassQuote(encoded);
+        }
+        catch (Exception e)
+        {
             System.out.println("Exception while decoding MassQuote. error=" + e);
             Thread.currentThread().interrupt();
         }
