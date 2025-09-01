@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'com.google.protobuf' version '0.9.4'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'org.example'
@@ -14,7 +15,7 @@ java {
 }
 
 application {
-    mainClass = 'org.mec.Main'
+//    mainClass = 'org.mec.Main'
     applicationDefaultJvmArgs = ['--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED']
 }
 
@@ -84,6 +85,17 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.36'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
+
+// Use shadowJar to create a fat jar
+tasks.named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+        manifest {
+            attributes(
+                    'Main-Class': 'org.mec.aeronlab.driver.StandaloneMediaDriver'
+            )
+        }
+        mainClassName = 'org.mec.aeronlab.driver.StandaloneMediaDriver'
+    }
+
 
 test {
     useJUnitPlatform()

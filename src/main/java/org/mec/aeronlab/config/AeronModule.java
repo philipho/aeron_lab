@@ -1,6 +1,7 @@
 package org.mec.aeronlab.config;
 
 import com.google.inject.AbstractModule;
+import org.mec.aeronlab.ConsumerApp;
 import org.mec.aeronlab.driver.EmbeddedMediaDriverProvider;
 import org.mec.aeronlab.messaging.AeronPublisher;
 import org.mec.aeronlab.messaging.AeronSubscriber;
@@ -11,5 +12,6 @@ public class AeronModule extends AbstractModule {
         bind(EmbeddedMediaDriverProvider.class).asEagerSingleton();
         bind(AeronPublisher.class).asEagerSingleton();
         bind(AeronSubscriber.class).asEagerSingleton();
+        bind(ConsumerApp.class).asEagerSingleton();
     }
 }

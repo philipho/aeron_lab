@@ -18,3 +18,10 @@
 # Other files
 .DS_Store
 
+# Ignore everything in scripts/
+scripts/*
+
+# But don't ignore these file types
+!scripts/*.sh
+!scripts/*.pl
+!scripts/*.py
