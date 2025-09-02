@@ -90,6 +90,8 @@ dependencies {
 tasks.named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
         manifest {
             attributes(
+                    // Remember to comment out "mainClass = 'org.mec.Main'" in the application block if declared.
+                    // Otherwise, Gradle will use that to overwrite whatever you put here.
                     'Main-Class': 'org.mec.aeronlab.driver.StandaloneMediaDriver'
             )
         }
