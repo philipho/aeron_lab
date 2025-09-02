@@ -17,9 +17,20 @@ public class MessageLoop implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < 10; i++) {
-            System.out.println("Message Loop " + i);
             byte[] msg = MassQuoteProcessor.encodeMassQuote(i);
+            System.out.println("Message Loop sending = " + i + ", bytes = " + msg.length);
             publisher.send(msg);
+//            subscriber.pollMassQuote();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            System.out.println("Message Loop receiving = " + i);
             subscriber.pollMassQuote();
             try {
                 Thread.sleep(100);

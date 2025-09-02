@@ -12,8 +12,8 @@ import jakarta.inject.Inject;
 
 public class AeronSubscriber
 {
+    private static final String STANDALONE_MEDIA_DRIVER_DIR = "./my-aeron-dir";
     private final Subscription subscription;
-
     // tracker is injected
     private final SequencePositionTracker tracker;
 
@@ -21,7 +21,8 @@ public class AeronSubscriber
     public AeronSubscriber(EmbeddedMediaDriverProvider driverProvider, SequencePositionTracker tracker)
     {
         System.out.println("AeronSubscriber.ctor called...");
-        Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(driverProvider.aeronDirectory()));
+        Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(STANDALONE_MEDIA_DRIVER_DIR));
+//        Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(driverProvider.aeronDirectory()));
 //        subscription = aeron.addSubscription("aeron:ipc", 10);
         subscription = aeron.addSubscription("aeron:udp?endpoint=224.0.1.1:40123|interface=192.168.1.107", 10);
         this.tracker = tracker;

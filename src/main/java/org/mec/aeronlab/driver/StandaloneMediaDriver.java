@@ -1,6 +1,8 @@
 package org.mec.aeronlab.driver;
 
 import io.aeron.driver.MediaDriver;
+import io.aeron.driver.ThreadingMode;
+import org.agrona.concurrent.BackoffIdleStrategy;
 
 public class StandaloneMediaDriver
 {
@@ -9,7 +11,9 @@ public class StandaloneMediaDriver
         try
         {
             System.out.println("Launching Aeron Media Driver...");
-            MediaDriver.launch(new MediaDriver.Context().aeronDirectoryName("./my-aeron-dir"));
+            MediaDriver.launch(new MediaDriver.Context().aeronDirectoryName("./my-aeron-dir")
+                    .threadingMode(ThreadingMode.SHARED)
+                    .sharedIdleStrategy(new BackoffIdleStrategy()));
             System.out.println("Media Driver launched.");
         }
         catch (Exception e)
