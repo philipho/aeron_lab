@@ -15,28 +15,46 @@ import org.mec.aeronlab.messaging.MessageLoop;
 import org.mec.aeronlab.messaging.RecordingIdFetcher;
 import org.mec.aeronlab.messaging.ReplayController;
 
+/**
+ * ConsumerApp subscribes to MassQuote messages.
+ * It does not publish any messages, so only need a Subscription. No Publication is required.
+ */
 public class ConsumerApp
 {
-    public final EmbeddedMediaDriverProvider driverProvider;
+    private static final String AERON_INTERFACE = "192.168.1.107";
+    public final String aeronDir;
 
     @Inject
-    public ConsumerApp(EmbeddedMediaDriverProvider driverProvider)
+    public ConsumerApp(String aeronDir)
     {
-        this.driverProvider = driverProvider;
+        this.aeronDir = aeronDir;
+    }
+
+    public String getAeronDir()
+    {
+        return aeronDir;
     }
 
     public static void main(String[] args)
     {
-        String liveChannel = "aeron:udp?endpoint=224.0.1.1:40123|interface=192.168.1.107";
-        int liveStreamId = 1001;
+        String liveChannel = "aeron:udp?ndpoint=224.0.1.1:40123|interface=192.168.1.107";
         String replayChannel = "aeron:udp?endpoint=224.0.1.1:40124|interface=192.168.1.107";
+        int liveStreamId = 1001;
         int replayStreamId = 2001;
+
+        String aeronInterface = System.getenv("AERON_INTERFACE");
+        if (aeronInterface != null) {
+            liveChannel = "aeron:udp?ndpoint=224.0.1.1:40123|interface=" + aeronInterface;
+            replayChannel = "aeron:udp?endpoint=224.0.1.1:40124|interface=" + aeronInterface;
+        }
+        System.out.println("liveChannel: " + liveChannel);
+        System.out.println("replayChannel: " + replayChannel);
 
         Injector injector = Guice.createInjector(new AeronModule());
         ConsumerApp app = injector.getInstance(ConsumerApp.class);
 
-        try (Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(app.driverProvider.aeronDirectory()));
-             AeronArchive archive = AeronArchive.connect(new AeronArchive.Context().aeronDirectoryName(app.driverProvider.aeronDirectory())))
+        try (Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(app.getAeronDir()));
+             AeronArchive archive = AeronArchive.connect(new AeronArchive.Context().aeronDirectoryName(app.getAeronDir())))
         {
             Publication publication = aeron.addPublication(liveChannel, liveStreamId);
 

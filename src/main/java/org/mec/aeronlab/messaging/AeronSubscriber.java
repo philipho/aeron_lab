@@ -24,7 +24,18 @@ public class AeronSubscriber
         Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(STANDALONE_MEDIA_DRIVER_DIR));
 //        Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(driverProvider.aeronDirectory()));
 //        subscription = aeron.addSubscription("aeron:ipc", 10);
-        subscription = aeron.addSubscription("aeron:udp?endpoint=224.0.1.1:40123|interface=192.168.1.107", 10);
+        String aeronInterface = System.getenv("AERON_INTERFACE");
+        System.out.println("Subscription AERON_INTERFACE aeronInterface=[" + aeronInterface + "]");
+
+        if (aeronInterface == null)
+        {
+            subscription = aeron.addSubscription("aeron:udp?endpoint=224.0.1.1:40123|interface=192.168.1.107", 10);
+        }
+        else
+        {
+            subscription = aeron.addSubscription("aeron:udp?endpoint=224.0.1.1:40123|interface=" + aeronInterface, 10);
+        }
+
         this.tracker = tracker;
     }
 
@@ -51,7 +62,18 @@ public class AeronSubscriber
                 MassQuoteProto.MassQuote mq = MassQuoteProcessor.decodeMassQuote(data);
                 long quoteId = Long.parseLong(mq.getQuoteId());
                 long pos = header.position();
-                System.out.println("AeronSubscriber.pollMassQuote: quoteId=" + quoteId + ", pos=" + pos);
+                int sessionId = header.sessionId();
+                int streamId = header.streamId();
+                int initialTermId = header.initialTermId();
+                int termOffset = header.termOffset();
+                int frameLength = header.frameLength();
+                System.out.println("AeronSubscriber.pollMassQuote: quoteId=" + quoteId
+                        + ", pos=" + pos);
+
+                String log = String.format("AeronSubscriber.pollMassQuote: quoteId=%s, pos=%d, sessionId=%d, " +
+                                "streamId=%d, initialTermId=%d, termOffset=%d, frameLength=%d",
+                                quoteId, pos, sessionId, streamId, initialTermId, termOffset, frameLength);
+                System.out.println(log);
 
                 tracker.record(quoteId, pos);
             }

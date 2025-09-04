@@ -21,7 +21,17 @@ public class AeronPublisher {
 //                .aeronDirectoryName(driverProvider.aeronDirectory()));
 //        publication = aeron.addPublication("aeron:ipc", 10);
         // Have to specify the interface parameter otherwise it won't work on local PC
-        publication = aeron.addPublication("aeron:udp?endpoint=224.0.1.1:40123|interface=192.168.1.107", 10);
+        String aeronInterface = System.getenv("AERON_INTERFACE");
+        System.out.println("Publication AERON_INTERFACE aeronInterface=[" + aeronInterface + "]");
+
+        if (aeronInterface == null)
+        {
+            publication = aeron.addPublication("aeron:udp?endpoint=224.0.1.1:40123|interface=192.168.1.107", 10);
+        }
+        else
+        {
+            publication = aeron.addPublication("aeron:udp?endpoint=224.0.1.1:40123|interface=" + aeronInterface, 10);
+        }
     }
 
     public void send(byte[] payload)
