@@ -1,9 +1,13 @@
 package org.mec.aeronlab.messaging;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.aeron.FragmentAssembler;
+import io.aeron.Image;
 import org.mec.aeronlab.MassQuoteProcessor;
 import org.mec.aeronlab.MassQuoteProto;
+import org.mec.aeronlab.config.AeronModule;
 import org.mec.aeronlab.driver.EmbeddedMediaDriverProvider;
 import io.aeron.Aeron;
 import io.aeron.Subscription;
@@ -12,13 +16,14 @@ import jakarta.inject.Inject;
 
 public class AeronSubscriber
 {
-    private static final String STANDALONE_MEDIA_DRIVER_DIR = "./my-aeron-dir";
+    private static final String STANDALONE_MEDIA_DRIVER_DIR = "./scripts/my-aeron-dir";
     private final Subscription subscription;
     // tracker is injected
     private final SequencePositionTracker tracker;
 
     @Inject
-    public AeronSubscriber(EmbeddedMediaDriverProvider driverProvider, SequencePositionTracker tracker)
+//    public AeronSubscriber(EmbeddedMediaDriverProvider driverProvider, SequencePositionTracker tracker)
+    public AeronSubscriber(SequencePositionTracker tracker)
     {
         System.out.println("AeronSubscriber.ctor called...");
         Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(STANDALONE_MEDIA_DRIVER_DIR));
@@ -91,5 +96,47 @@ public class AeronSubscriber
         FragmentHandler assembler = new FragmentAssembler(handler);
 
         subscription.poll(assembler, 10);
+
+        // Diagnostics
+//        if (!subscription.isConnected())
+//        {
+//            System.out.println("Subscription is connected");
+//        }
+//        else {
+//            System.out.println("Subscritpion is NOT connected");
+//        }
+//
+//        int imageCount = subscription.imageCount();
+//        System.out.println("📷 Image count: " + imageCount);
+//
+//        for (int i = 0; i < imageCount; i++) {
+//            Image image = subscription.imageAtIndex(i);
+//            long position = image.position();
+//            long joinPosition = image.joinPosition();
+//
+//            System.out.printf("📊 Image[%d] Position: %d | Join: %d%n", i, position, joinPosition);
+//
+//            if (image.isClosed()) {
+//                System.out.println("🚫 Image is closed");
+//            }
+//        }
+    }
+
+    public static void main(String[] args)
+    {
+        Injector injector = Guice.createInjector(new AeronModule());
+        AeronSubscriber subscriber = injector.getInstance(AeronSubscriber.class);
+        boolean isDone = false;
+        int msgIdx = 1;
+
+        while (!isDone)
+        {
+            subscriber.pollMassQuote();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }

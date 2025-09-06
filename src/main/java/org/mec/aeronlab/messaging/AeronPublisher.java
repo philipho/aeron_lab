@@ -1,6 +1,10 @@
 package org.mec.aeronlab.messaging;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import org.mec.aeronlab.MassQuoteProcessor;
 import org.mec.aeronlab.MassQuoteProto;
+import org.mec.aeronlab.config.AeronModule;
 import org.mec.aeronlab.driver.EmbeddedMediaDriverProvider;
 import io.aeron.Aeron;
 import io.aeron.Publication;
@@ -10,11 +14,13 @@ import org.agrona.concurrent.UnsafeBuffer;
 import java.nio.ByteBuffer;
 
 public class AeronPublisher {
-    private static final String STANDALONE_MEDIA_DRIVER_DIR = "./my-aeron-dir";
+    private static final String STANDALONE_MEDIA_DRIVER_DIR = "./scripts/my-aeron-dir";
     private final Publication publication;
 
     @Inject
-    public AeronPublisher(EmbeddedMediaDriverProvider driverProvider) {
+//    public AeronPublisher(EmbeddedMediaDriverProvider driverProvider) {
+    public AeronPublisher()
+    {
         System.out.println("AeroPublisher.ctor called...");
         Aeron aeron = Aeron.connect(new Aeron.Context()
                 .aeronDirectoryName(STANDALONE_MEDIA_DRIVER_DIR));
@@ -41,7 +47,7 @@ public class AeronPublisher {
         do {
             result = publication.offer(buffer);
             if (result < 0) {
-                System.out.println("Offer failed: " + result);
+                System.out.println("Publisher offer failed, result = " + result);
                 try
                 {
                     Thread.sleep(5); // back off briefly
@@ -50,6 +56,10 @@ public class AeronPublisher {
                 {
                     throw new RuntimeException(e);
                 }
+            }
+            else
+            {
+                System.out.println("Publisher offer succeeded, result = " + result);
             }
         } while (result < 0);
         System.out.println("Sent " + payload.length + " bytes");
@@ -60,5 +70,26 @@ public class AeronPublisher {
         buffer.putStringWithoutLengthAscii(0, message);
         long result = publication.offer(buffer, 0, buffer.capacity());
         System.out.println("Sent: " + message + " (result=" + result + ")");
+    }
+
+    public static void main(String[] args)
+    {
+        Injector injector = Guice.createInjector(new AeronModule());
+        AeronPublisher publisher = injector.getInstance(AeronPublisher.class);
+        int numOfMsgToSend = 100;
+
+        for (int i = 0; i < numOfMsgToSend; i++)
+        {
+            byte[] msg = MassQuoteProcessor.encodeMassQuote(i);
+            System.out.println("Publisher sending = " + i + ", bytes = " + msg.length);
+            publisher.send(msg);
+            try {
+                Thread.sleep(1_000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        System.out.println("Publish sent " + numOfMsgToSend + " messages.");
     }
 }

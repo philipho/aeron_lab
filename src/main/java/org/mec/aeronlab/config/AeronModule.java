@@ -9,9 +9,9 @@ import org.mec.aeronlab.messaging.AeronSubscriber;
 public class AeronModule extends AbstractModule {
     @Override
     public void configure() {
-        bind(EmbeddedMediaDriverProvider.class).asEagerSingleton();
+//        bind(EmbeddedMediaDriverProvider.class).asEagerSingleton();
         bind(AeronPublisher.class).asEagerSingleton();
         bind(AeronSubscriber.class).asEagerSingleton();
-        bind(ConsumerApp.class).asEagerSingleton();
+//        bind(ConsumerApp.class).asEagerSingleton();
     }
 }
