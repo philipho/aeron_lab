@@ -1,9 +1,9 @@
-package org.mec.aeronlab.messaging;
+package org.mec.aeronlab.archive;
 
 import io.aeron.Aeron;
 import io.aeron.Subscription;
 import io.aeron.archive.client.AeronArchive;
-import org.mec.aeronlab.MassQuoteProcessor;
+import org.mec.aeronlab.util.MassQuoteProcessor;
 import org.mec.aeronlab.MassQuoteProto;
 
 import java.util.concurrent.atomic.AtomicLong;

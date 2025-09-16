@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package tutorial;
+
+option java_multiple_files = false;
+option java_package = "org.mec.protobuflab.tutorial.protos";
+option java_outer_classname = "OneOfExampleProtos";
+
+message Example
+{
+  oneof my_one_of
+  {
+    SubMessageA msg_a = 1;
+    SubMessageB msg_b = 2;
+  }
+}
+
+message SubMessageA
+{
+  string field_a = 1;
+}
+
+message SubMessageB
+{
+  string field_b = 1;
+}

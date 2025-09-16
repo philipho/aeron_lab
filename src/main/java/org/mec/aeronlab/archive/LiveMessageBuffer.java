@@ -1,4 +1,4 @@
-package org.mec.aeronlab.messaging;
+package org.mec.aeronlab.archive;
 
 import org.mec.aeronlab.MassQuoteProto;
 

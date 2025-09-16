@@ -2,10 +2,8 @@ package org.mec.aeronlab.messaging;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.mec.aeronlab.MassQuoteProcessor;
-import org.mec.aeronlab.MassQuoteProto;
+import org.mec.aeronlab.util.MassQuoteProcessor;
 import org.mec.aeronlab.config.AeronModule;
-import org.mec.aeronlab.driver.EmbeddedMediaDriverProvider;
 import io.aeron.Aeron;
 import io.aeron.Publication;
 import jakarta.inject.Inject;

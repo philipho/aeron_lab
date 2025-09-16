@@ -1,7 +1,7 @@
 package org.mec.aeronlab.messaging;
 
 import jakarta.inject.Inject;
-import org.mec.aeronlab.MassQuoteProcessor;
+import org.mec.aeronlab.util.MassQuoteProcessor;
 
 public class MessageLoop implements Runnable {
     private final AeronPublisher publisher;

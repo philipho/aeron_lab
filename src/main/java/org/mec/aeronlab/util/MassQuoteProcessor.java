@@ -1,4 +1,6 @@
-package org.mec.aeronlab;
+package org.mec.aeronlab.util;
+
+import org.mec.aeronlab.MassQuoteProto;
 
 import java.util.List;
 

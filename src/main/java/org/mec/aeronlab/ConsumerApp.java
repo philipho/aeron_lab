@@ -7,13 +7,10 @@ import io.aeron.Publication;
 import io.aeron.archive.client.AeronArchive;
 import io.aeron.archive.codecs.SourceLocation;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import org.mec.aeronlab.config.AeronModule;
-import org.mec.aeronlab.driver.EmbeddedMediaDriverProvider;
 import org.mec.aeronlab.messaging.MarketDataSubscriber;
-import org.mec.aeronlab.messaging.MessageLoop;
-import org.mec.aeronlab.messaging.RecordingIdFetcher;
-import org.mec.aeronlab.messaging.ReplayController;
+import org.mec.aeronlab.archive.RecordingIdFetcher;
+import org.mec.aeronlab.archive.ReplayController;
 
 /**
  * ConsumerApp subscribes to MassQuote messages.

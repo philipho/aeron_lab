@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package fix;
 
+option java_multiple_files = false;
 option java_package = "org.mec.aeronlab";
 option java_outer_classname = "MassQuoteProto";
 

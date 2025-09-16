@@ -1,4 +1,4 @@
-package org.mec.aeronlab;
+package org.mec.aeronlab.util;
 import java.util.HashMap;
 import java.util.Random;
 
