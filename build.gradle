@@ -16,7 +16,21 @@ java {
 
 application {
 //    mainClass = 'org.mec.Main'
-    applicationDefaultJvmArgs = ['--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED']
+    applicationDefaultJvmArgs = [
+            '--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED',
+            '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED',
+            '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
+            '--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED',
+            '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac=ALL-UNNAMED',
+            '--add-opens=java.base/java.lang=ALL-UNNAMED',
+            '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
+            '--add-opens=java.base/java.io=ALL-UNNAMED',
+            '--add-opens=java.base/java.util=ALL-UNNAMED',
+            '--illegal-access=permit',
+            '--add-exports java.base/jdk.internal.ref=ALL-UNNAMED',
+            '--add-exports java.base/jdk.internal.util=ALL-UNNAMED'
+    ]
 }
 
 repositories {
@@ -81,8 +95,9 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'ch.qos.logback:logback-classic:1.4.12'
     compileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
     testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    // annotation processors
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
 

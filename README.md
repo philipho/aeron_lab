@@ -1,3 +1,5 @@
+# This is the parent project of all learning/studying/re-learning
+
 ## Aeron notes
 Aeron = API + Media Driver + **Aeron Archive** + **Aeron Cluster**
 
