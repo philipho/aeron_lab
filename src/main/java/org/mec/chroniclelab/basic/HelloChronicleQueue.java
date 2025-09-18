@@ -1,12 +1,16 @@
 package org.mec.chroniclelab.basic;
 
-import net.openhft.chronicle.queue.ChronicleQueue;
 import net.openhft.chronicle.queue.ExcerptAppender;
 import net.openhft.chronicle.queue.ExcerptTailer;
+import net.openhft.chronicle.queue.RollCycle;
+import net.openhft.chronicle.queue.RollCycles;
+import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
+import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 import net.openhft.chronicle.threads.Pauser;
+import net.openhft.chronicle.wire.DocumentContext;
 
-import java.io.File;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class HelloChronicleQueue
 {
@@ -15,7 +19,11 @@ public class HelloChronicleQueue
     static Runnable writer = () ->
     {
         int idx = 1;
-        try (ChronicleQueue queue = ChronicleQueue.single(CHRONICLE_QUEUE_DIR))
+//        try (ChronicleQueue queue = ChronicleQueue.single(CHRONICLE_QUEUE_DIR))
+        try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.single(CHRONICLE_QUEUE_DIR)
+                .rollCycle(CustomRollCycle.CUSTOM_15_MIN)
+                .build()
+        )
         {
             ExcerptAppender appender = queue.createAppender();
             while (true)
@@ -35,42 +43,102 @@ public class HelloChronicleQueue
         }
     };
 
-    static Runnable reader = () ->
+    static class Reader implements Runnable
     {
-        Pauser pauser = Pauser.balanced();
+        private volatile boolean isDone = false;
+        private String name;
+        private long startReadTime = 0;
 
-        try (ChronicleQueue queue = ChronicleQueue.single(CHRONICLE_QUEUE_DIR))
+        public Reader(String name)
         {
-            ExcerptTailer tailer = queue.createTailer();
-            String msg;
-            while (true)
-            {
-                msg = tailer.readText();
+            this.name = name;
+        }
 
-                if (msg != null)
+        public void setStartReadTime(long startReadTime)
+        {
+            this.startReadTime = startReadTime;
+        }
+
+        @Override
+        public void run()
+        {
+            Pauser pauser = net.openhft.chronicle.threads.Pauser.balanced();
+
+//            try (ChronicleQueue queue = ChronicleQueue.single(CHRONICLE_QUEUE_DIR))
+            try (SingleChronicleQueue queue =
+                         SingleChronicleQueueBuilder.single(CHRONICLE_QUEUE_DIR)
+                                 .rollCycle(CustomRollCycle.CUSTOM_15_MIN)
+                                 .build()
+            )
+            {
+                ExcerptTailer tailer = queue.createTailer();
+
+                if (startReadTime > 0)
                 {
-                    System.out.println("read: msg = " + msg);
-                    pauser.reset();
+                    CustomRollCycle rollCycle = (CustomRollCycle)queue.rollCycle();
+                    int cycle = (int)(startReadTime / rollCycle.getCycleLengthMillis());
+                    long fileSparseIndex = rollCycle.toIndex(cycle, 0);
+                    tailer.moveToIndex(fileSparseIndex);
                 }
-                else
+
+                String msg;
+                while (!isDone)
                 {
-                    pauser.pause();
+                    msg = tailer.readText();
+
+                    if (msg != null)
+                    {
+                        System.out.println(this.name + " - read: msg = " + msg);
+                        pauser.reset();
+                    }
+                    else
+                    {
+                        pauser.pause();
+                    }
                 }
             }
         }
-    };
 
-    public static void main(String[] args) throws InterruptedException
+        public void isDone(boolean f)
+        {
+            this.isDone = f;
+        }
+    }
+
+    //------------ Test ---------------------
+    public static void testOneWriterTwoReaders() throws InterruptedException
     {
+        Thread readerThread1 = new Thread(new Reader("Joe"));
+        readerThread1.start();
+
+        Thread.sleep(5_000);
+
         Thread writerThread = new Thread(writer);
         writerThread.start();
 
         Thread.sleep(5_000);
 
-        Thread readerThread = new Thread(reader);
-        readerThread.start();
+        Thread readerThread2 = new Thread(new Reader("Pete"));
+        readerThread2.start();
+
 
         writerThread.join();
-        readerThread.join();
+        readerThread1.join();
+    }
+
+    public static void testReadFromSpecificTime()
+    {
+        Reader reader = new Reader("read_from_sometime");
+        LocalDateTime targetTime = LocalDateTime.of(2025, 9, 18, 15, 12, 2);
+        long timestampMillis = 1_000L * (targetTime.atZone(ZoneId.systemDefault()).toEpochSecond());
+        reader.setStartReadTime(timestampMillis);
+        reader.run();
+    }
+
+
+    public static void main(String[] args) throws InterruptedException
+    {
+        testOneWriterTwoReaders();
+//        testReadFromSpecificTime();
     }
 }
