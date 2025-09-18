@@ -4,8 +4,8 @@ import net.openhft.chronicle.queue.RollCycle;
 
 public class CustomRollCycle implements RollCycle
 {
-    // Roll cycle length - 15 minutes
-    private static final int LENGTH_MILLIS = 1 * 60 * 1000;
+    // Roll cycle length - 2 minutes. So generate one file every two minutes
+    private static final int CYCLE_LENGTH_MILLIS = 2 * 60 * 1000;
 
     // File format
     private static final String FORMAT = "yyyyMMdd-HHmm";
@@ -16,12 +16,12 @@ public class CustomRollCycle implements RollCycle
     private static final int SEQUENCE_BITS = 32;
 
     // Cycle name
-    public static final RollCycle CUSTOM_15_MIN = new CustomRollCycle();
+    public static final RollCycle CUSTOM_ROLL_CYCLE = new CustomRollCycle();
 
 
     public long getCycleLengthMillis()
     {
-        return LENGTH_MILLIS;
+        return CYCLE_LENGTH_MILLIS;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CustomRollCycle implements RollCycle
     @Override
     public int lengthInMillis()
     {
-        return LENGTH_MILLIS;
+        return CYCLE_LENGTH_MILLIS;
     }
 
     @Override

@@ -2,12 +2,9 @@ package org.mec.chroniclelab.basic;
 
 import net.openhft.chronicle.queue.ExcerptAppender;
 import net.openhft.chronicle.queue.ExcerptTailer;
-import net.openhft.chronicle.queue.RollCycle;
-import net.openhft.chronicle.queue.RollCycles;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 import net.openhft.chronicle.threads.Pauser;
-import net.openhft.chronicle.wire.DocumentContext;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -21,7 +18,7 @@ public class HelloChronicleQueue
         int idx = 1;
 //        try (ChronicleQueue queue = ChronicleQueue.single(CHRONICLE_QUEUE_DIR))
         try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.single(CHRONICLE_QUEUE_DIR)
-                .rollCycle(CustomRollCycle.CUSTOM_15_MIN)
+                .rollCycle(CustomRollCycle.CUSTOM_ROLL_CYCLE)
                 .build()
         )
         {
@@ -67,7 +64,7 @@ public class HelloChronicleQueue
 //            try (ChronicleQueue queue = ChronicleQueue.single(CHRONICLE_QUEUE_DIR))
             try (SingleChronicleQueue queue =
                          SingleChronicleQueueBuilder.single(CHRONICLE_QUEUE_DIR)
-                                 .rollCycle(CustomRollCycle.CUSTOM_15_MIN)
+                                 .rollCycle(CustomRollCycle.CUSTOM_ROLL_CYCLE)
                                  .build()
             )
             {
