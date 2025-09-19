@@ -10,7 +10,7 @@ public class CustomRollCycle implements RollCycle
     // File format
     private static final String FORMAT = "yyyyMMdd-HHmm";
 
-    // Sequnce bits.
+    // Sequence bits.
     // The number of bits in the index that are reserved for the sequence number.
     // This value is determined by the maximum number of messages you expect per cycle.
     private static final int SEQUENCE_BITS = 32;

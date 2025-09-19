@@ -70,6 +70,7 @@ public class HelloChronicleQueue
             {
                 ExcerptTailer tailer = queue.createTailer();
 
+                // Read from specific time
                 if (startReadTime > 0)
                 {
                     CustomRollCycle rollCycle = (CustomRollCycle)queue.rollCycle();
